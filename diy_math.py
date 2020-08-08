@@ -25,7 +25,8 @@ def single_var(file_path='table1.xls', data=[]):    # 单变量统计
         variance = np.var(data)  # 方差
         standard = np.sqrt(variance)    # 标准差
         u_a = standard / np.sqrt(n-1)   # A类不确定度
-
+        
+        # 打印结果
         print("元素个数 = %d" % n)
         print("平均值 = %.7f" % ave)
         print("最大值 = %.4f，最小值 = %.4f，极差 = %.4f" %
@@ -33,12 +34,12 @@ def single_var(file_path='table1.xls', data=[]):    # 单变量统计
         print("方差 = %.7f，标准差 = %.7f" % (variance, standard))
         print("A类不确定度 = %.7lf" % u_a)
         print(' ')
-
+        
+        # 将结果写入文本文件
         f = open("单变量统计.txt", "a")
         f.write("数据：")
         for data0 in data:
-            f.write("%5.4f" % data0)
-            f.write(', ')
+            f.write("%5.4f, " % data0)
         f.write('\n')
         f.write("元素个数 = %d\n" % n)
         f.write("平均值 = %.7f\n" % ave)
@@ -46,15 +47,17 @@ def single_var(file_path='table1.xls', data=[]):    # 单变量统计
             (max_value, min_value, max_value - min_value))
         f.write("方差 = %.7f，标准差 = %.7f\n" % (variance, standard))
         f.write("A类不确定度 = %.7lf\n\n" % u_a)
-
+        # 如果列表非空，即用户以列表为参数传入，则不用从excel中导入
         return
 
+    # 从excel获取数据
     wb = xlrd.open_workbook(file_path)
     table = wb.sheet_by_index(nsheet)
     nsheet += 1  # 如果需要的话，为打开第2张表做准备
-    nrows = table.nrows
-    ncols = table.ncols
-
+    nrows = table.nrows # 行数
+    ncols = table.ncols # 列数
+    
+    # excel中可能读入多各变量的多组数据，故将这些量初始化为列表
     n = []
     ave = []
     max_value = []
@@ -63,7 +66,7 @@ def single_var(file_path='table1.xls', data=[]):    # 单变量统计
     variance = []
     standard = []
     u_a = []
-    for i in range(nrows):
+    for i in range(nrows):  # 第i行，第(i+1)个变量
         data = table.row_values(i)  # 读取表的第i行
         print(data)
 
@@ -71,11 +74,12 @@ def single_var(file_path='table1.xls', data=[]):    # 单变量统计
         ave.append(np.mean(data))  # 平均值
         max_value.append(max(data))
         min_value.append(min(data))    # 极值
-        extre_dif.append(max(data)-min(data))
+        extre_dif.append(max(data)-min(data))   # 极差
         variance.append(np.var(data))  # 方差
         standard.append(np.sqrt(variance[i]))    # 标准差
         u_a.append(standard[i] / np.sqrt(n[i]-1))   # A类不确定度
 
+        # 打印结果
         print("元素个数 = %d" % n[i])
         print("平均值 = %.7f" % ave[i])
         print("最大值 = %.4f，最小值 = %.4f，极差 = %.4f" %
@@ -83,7 +87,8 @@ def single_var(file_path='table1.xls', data=[]):    # 单变量统计
         print("方差 = %.7f，标准差 = %.7f" % (variance[i], standard[i]))
         print("A类不确定度 = %.7lf" % u_a[i])
         print(' ')
-
+        
+        # 将结果写入文本文件，由于用了循环，文件可能已创立，故采用追加的方式
         f = open("单变量统计.txt", "a")
         f.write("数据：")
         for data0 in data:
@@ -97,7 +102,7 @@ def single_var(file_path='table1.xls', data=[]):    # 单变量统计
         f.write("方差 = %.7f，标准差 = %.7f\n" % (variance[i], standard[i]))
         f.write("A类不确定度 = %.7lf\n\n" % u_a[i])
 
-    # 将数据写入excel
+    # 将数据写入excel(现在不想要这个功能了)
     # excel = copy(wb=wb)  # 完成xlrd对象向xlwt对象转换
     # excel_table = excel.get_sheet(nsheet-1)    # 获得要操作的页
     # for i in range(nrows):
